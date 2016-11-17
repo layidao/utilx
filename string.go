@@ -6,12 +6,12 @@ import (
 	"fmt"
 	// "io"
 	// "io/ioutil"
-	// "math/rand"
+	"math/rand"
 	// "net"
 	// "net/http"
 	// "net/url"
 	"strconv"
-	// "strings"
+	"strings"
 	"time"
 )
 
@@ -27,7 +27,35 @@ func GetWidthRandNum(base int) string {
 	return fmt.Sprintf(format, GetRandNum(base))
 }
 
+// 获取token
+func GetToken() string {
+	nano := time.Now().UnixNano()
+	rand.Seed(nano)
+	rndNum := rand.Int63()
+	uuid := Md5(Md5(strconv.FormatInt(nano, 10)) + Md5(strconv.FormatInt(rndNum, 10)))
+	return uuid
+}
+
 // 字符串长度
 func Strlen(str string) int {
 	return len([]rune(str))
+}
+
+// IP 地址转为正数
+func IP2Int(ip string) int64 {
+	bits := strings.Split(ip, ".")
+
+	b0, _ := strconv.Atoi(bits[0])
+	b1, _ := strconv.Atoi(bits[1])
+	b2, _ := strconv.Atoi(bits[2])
+	b3, _ := strconv.Atoi(bits[3])
+
+	var sum int64
+
+	sum += int64(b0) << 24
+	sum += int64(b1) << 16
+	sum += int64(b2) << 8
+	sum += int64(b3)
+
+	return sum
 }

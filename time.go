@@ -2,6 +2,7 @@ package utilx
 
 import (
 	"fmt"
+	"strconv"
 	"time"
 )
 
@@ -33,9 +34,25 @@ func GetCurrentDayStartTime() int64 {
 	return Date2Stamp(currDate, "2006-01-02 15:04:05")
 }
 
-// 时间戳转日期
-func Stamp2Date(timestamp int64, format string) string {
+// 时间戳转日期格式
+func StampStringToDate(timestampStr, format string) string {
+	timestamp, _ := strconv.ParseInt(timestampStr, 10, 64)
 	tm := time.Unix(timestamp, 0)
+
+	if format == "" {
+		format = "2006-01-02 03:04:05"
+	}
+
+	return tm.Format(format)
+}
+
+// 时间戳转日期
+func StampIntToDate(timestamp int64, format string) string {
+	tm := time.Unix(timestamp, 0)
+
+	if format == "" {
+		format = "2006-01-02 03:04:05"
+	}
 	return tm.Format(format)
 }
 
