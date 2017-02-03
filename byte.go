@@ -10,7 +10,10 @@ func ByteToString(data []byte) string {
 }
 
 func ByteToInt(data []byte) int {
-	val, _ := strconv.Atoi(string(data))
+	val, err := strconv.Atoi(string(data))
+	if err != nil {
+		return 0
+	}
 	return val
 }
 

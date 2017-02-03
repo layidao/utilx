@@ -2,6 +2,7 @@ package utilx
 
 import (
 	"crypto/md5"
+	crand "crypto/rand"
 	// "crypto/sha1"
 	"fmt"
 	// "io"
@@ -34,6 +35,20 @@ func GetToken() string {
 	rndNum := rand.Int63()
 	uuid := Md5(Md5(strconv.FormatInt(nano, 10)) + Md5(strconv.FormatInt(rndNum, 10)))
 	return uuid
+}
+
+func GetUUID() string {
+	buf := make([]byte, 16)
+	if _, err := crand.Read(buf); err != nil {
+		panic(fmt.Errorf("failed to read random bytes: %v", err))
+	}
+
+	return fmt.Sprintf("%08x-%04x-%04x-%04x-%12x",
+		buf[0:4],
+		buf[4:6],
+		buf[6:8],
+		buf[8:10],
+		buf[10:16])
 }
 
 // 字符串长度

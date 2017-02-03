@@ -40,7 +40,7 @@ func StampStringToDate(timestampStr, format string) string {
 	tm := time.Unix(timestamp, 0)
 
 	if format == "" {
-		format = "2006-01-02 03:04:05"
+		format = "2006-01-02 15:04:05"
 	}
 
 	return tm.Format(format)
@@ -51,7 +51,7 @@ func StampIntToDate(timestamp int64, format string) string {
 	tm := time.Unix(timestamp, 0)
 
 	if format == "" {
-		format = "2006-01-02 03:04:05"
+		format = "2006-01-02 15:04:05"
 	}
 	return tm.Format(format)
 }

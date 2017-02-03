@@ -58,3 +58,12 @@ func ServerIP() (string, string) {
 
 	return externalIP, internalIP
 }
+
+func SerIP() string {
+	eIP, iIP := ServerIP()
+	if eIP != "" {
+		return eIP
+	} else {
+		return iIP
+	}
+}

@@ -1,6 +1,7 @@
 package utilx
 
 import (
+	"sort"
 	"strconv"
 )
 
@@ -62,4 +63,107 @@ func SliceUniqueString(s []string) []string {
 	}
 
 	return ret
+}
+
+// 对切片进行排序
+func SliceSort() {}
+func SliceSortString(s []string) []string {
+	size := len(s)
+	intSlice := make([]int, size)
+	for i := 0; i < size; i++ {
+		num, _ := strconv.Atoi(s[i])
+		intSlice[i] = num
+	}
+	sort.Ints(intSlice)
+	for i := 0; i < size; i++ {
+		num := strconv.Itoa(intSlice[i])
+		s[i] = num
+	}
+
+	return s
+}
+
+// 对切片排序，并保持索引关系
+func SliceAsortDesc(s []int) []int {
+	n := len(s)
+	if n < 1 {
+		return nil
+	}
+
+	index := make([]int, n)
+	for i := 0; i < n; i++ {
+		index[i] = i
+	}
+
+	n = n - 1
+	for i := 0; i < n; i++ {
+		m := n - i
+		for j := 0; j < m; j++ {
+			if s[j] < s[j+1] {
+				s[j], s[j+1] = s[j+1], s[j]
+				index[j], index[j+1] = index[j+1], index[j]
+			}
+		}
+	}
+	return index
+}
+
+func SliceAsortDescInt64(s []int64) []int {
+	n := len(s)
+	if n < 1 {
+		return nil
+	}
+
+	index := make([]int, n)
+	for i := 0; i < n; i++ {
+		index[i] = i
+	}
+
+	n = n - 1
+	for i := 0; i < n; i++ {
+		m := n - i
+		for j := 0; j < m; j++ {
+			if s[j] < s[j+1] {
+				s[j], s[j+1] = s[j+1], s[j]
+				index[j], index[j+1] = index[j+1], index[j]
+			}
+		}
+	}
+	return index
+}
+
+func SliceAsortASCInt64(s []int64) []int {
+	n := len(s)
+	if n < 1 {
+		return nil
+	}
+
+	index := make([]int, n)
+	for i := 0; i < n; i++ {
+		index[i] = i
+	}
+
+	n = n - 1
+	for i := 0; i < n; i++ {
+		m := n - i
+		for j := 0; j < m; j++ {
+			if s[j] > s[j+1] {
+				s[j], s[j+1] = s[j+1], s[j]
+				index[j], index[j+1] = index[j+1], index[j]
+			}
+		}
+	}
+	return index
+}
+
+// 常用于redis的hgetall查询出的结果
+func SliceToMap(s []string) map[string]string {
+	n := len(s)
+	m := make(map[string]string)
+	for i := 0; i < n; i += 2 {
+		key := s[i]
+		val := s[i+1]
+		m[key] = val
+	}
+	return m
 }
