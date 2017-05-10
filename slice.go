@@ -3,6 +3,7 @@ package utilx
 import (
 	"sort"
 	"strconv"
+	"strings"
 )
 
 func SliceContainsInt(sl []int, v int) bool {
@@ -166,4 +167,14 @@ func SliceToMap(s []string) map[string]string {
 		m[key] = val
 	}
 	return m
+}
+
+func StringTointSlice(list string) []int {
+	s := strings.Split(list, ",")
+	n := len(s)
+	rs := make([]int, n)
+	for i := 0; i < n; i++ {
+		rs[i], _ = strconv.Atoi(s[i])
+	}
+	return rs
 }
