@@ -65,3 +65,29 @@ func Date2Stamp(date string, format string) int64 {
 	tm, _ := time.Parse(format, date)
 	return tm.Unix()
 }
+
+// 获取前n天的数据
+func NDateBefore(n int, isMulti bool, format string) []string {
+	rs := make([]string, 0)
+	nTime := time.Now()
+
+	if format == "" {
+		format = "20060102"
+	}
+
+	if isMulti {
+		j := -1
+		for i := 0; i < n; i++ {
+			yesTime := nTime.AddDate(0, 0, j)
+			j--
+
+			logDay := yesTime.Format(format)
+			rs = append(rs, logDay)
+		}
+	} else {
+		yesTime := nTime.AddDate(0, 0, -1*n)
+		logDay := yesTime.Format(format)
+		rs = append(rs, logDay)
+	}
+	return rs
+}
