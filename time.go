@@ -6,7 +6,11 @@ import (
 	"time"
 )
 
-const ChinaTimeZoneOffset = 8 * 60 * 60 //Beijing(UTC+8:00)
+const (
+	ChinaTimeZoneOffset = 8 * 60 * 60 //Beijing(UTC+8:00)
+	stdLayout           = "2006-01-02 15:04:05"
+)
+
 // 时间戳的字符串
 func TimestampString() string {
 	return fmt.Sprintf("%d", time.Now().Unix()+ChinaTimeZoneOffset)
@@ -90,4 +94,19 @@ func NDateBefore(n int, isMulti bool, format string) []string {
 		rs = append(rs, logDay)
 	}
 	return rs
+}
+
+// 日期时间从指定时区转为本地时区
+func Dateloction(datetime string, fromloc string) (string, error) {
+
+	loc, err := time.LoadLocation(fromloc) // 默认为UTC 格林威治 中时区即零时区
+	if err != nil {
+		return "", err
+	}
+	t, err := time.ParseInLocation(stdLayout, datetime, loc)
+	if err != nil {
+		return "", err
+	}
+
+	return time.Unix(t.Unix(), 0).Format(stdLayout), nil
 }
