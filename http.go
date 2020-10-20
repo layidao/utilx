@@ -6,70 +6,59 @@ import (
 	"io/ioutil"
 	"net"
 	"net/http"
-	"net/url"
-	"strings"
 	"time"
 )
 
-// GET请求
-func HttpGet(urlStr string) ([]byte, error) {
-
-	client := &http.Client{
-		Transport: &http.Transport{
-			Dial: func(netw, addr string) (net.Conn, error) {
-				conn, err := net.DialTimeout(netw, addr, time.Second*2)
-				if err != nil {
-					return nil, err
-				}
-				conn.SetDeadline(time.Now().Add(time.Second * 2))
-				return conn, nil
-			},
-			ResponseHeaderTimeout: time.Second * 2,
-		},
+func getHttpClient() *http.Client {
+	var netTransport = &http.Transport{
+		DialContext: (&net.Dialer{
+			Timeout: 30 * time.Second,
+		}).DialContext,
+		TLSHandshakeTimeout: 30 * time.Second,
+		TLSClientConfig:     &tls.Config{InsecureSkipVerify: true},
 	}
-	req, _ := http.NewRequest("GET", urlStr, nil)
-
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
+	return &http.Client{
+		Timeout:   time.Second * 35,
+		Transport: netTransport,
 	}
-	defer resp.Body.Close()
-
-	data, err := ioutil.ReadAll(resp.Body)
-	return data, err
 }
 
-// POST请求
-func HttpPost(urlStr string, params url.Values) ([]byte, error) {
-	encodeParam := params.Encode()
-	body := ioutil.NopCloser(strings.NewReader(encodeParam))
-	client := &http.Client{
-		Transport: &http.Transport{
-			Dial: func(netw, addr string) (net.Conn, error) {
-				conn, err := net.DialTimeout(netw, addr, time.Second*2)
-				if err != nil {
-					return nil, err
-				}
-				conn.SetDeadline(time.Now().Add(time.Second * 2))
-				return conn, nil
-			},
-			ResponseHeaderTimeout: time.Second * 2,
-		},
-	}
-	req, _ := http.NewRequest("POST", urlStr, body)
-
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded; param=value")
-	req.ContentLength = int64(len(encodeParam))
-	resp, err := client.Do(req)
+func HttpGet(url string) ([]byte, error) {
+	client := getHttpClient()
+	resp, err := client.Get(url)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
-	data, err := ioutil.ReadAll(resp.Body)
-	return data, err
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		resp.Body.Close()
+		return nil, err
+	}
+	if err := resp.Body.Close(); err != nil {
+		return nil, err
+	}
+
+	return body, err
+}
+
+func HttpPost(url, contentType string, data []byte) ([]byte, error) {
+	client := getHttpClient()
+	resp, err := client.Post(url, contentType, bytes.NewBuffer(data))
+	if err != nil {
+		return nil, err
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		resp.Body.Close()
+		return nil, err
+	}
+	if err := resp.Body.Close(); err != nil {
+		return nil, err
+	}
+
+	return body, err
 }
 
 // POST 请求体
