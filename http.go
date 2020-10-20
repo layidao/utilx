@@ -23,20 +23,21 @@ func getHttpClient() *http.Client {
 	}
 }
 
-func HttpGet(url string) (int, []byte, error) {
+func HttpGet(url string) (code int, body []byte, err error) {
 	client := getHttpClient()
-	resp, err := client.Get(url)
-	if err != nil {
-		return nil, err
+	resp, e := client.Get(url)
+	if e != nil {
+		err = e
+		return
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		resp.Body.Close()
-		return nil, err
+		return
 	}
-	if err := resp.Body.Close(); err != nil {
-		return nil, err
+	if err = resp.Body.Close(); err != nil {
+		return
 	}
 
 	return resp.StatusCode, body, err
