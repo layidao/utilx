@@ -23,7 +23,7 @@ func getHttpClient() *http.Client {
 	}
 }
 
-func HttpGet(url string) ([]byte, error) {
+func HttpGet(url string) (int, []byte, error) {
 	client := getHttpClient()
 	resp, err := client.Get(url)
 	if err != nil {
@@ -39,7 +39,7 @@ func HttpGet(url string) ([]byte, error) {
 		return nil, err
 	}
 
-	return body, err
+	return resp.StatusCode, body, err
 }
 
 func HttpPost(url, contentType string, data []byte) ([]byte, error) {
