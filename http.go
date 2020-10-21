@@ -31,6 +31,7 @@ func HttpGet(url string) (code int, body []byte, err error) {
 		return
 	}
 
+	code = resp.StatusCode
 	body, err = ioutil.ReadAll(resp.Body)
 	if err != nil {
 		resp.Body.Close()
@@ -40,7 +41,7 @@ func HttpGet(url string) (code int, body []byte, err error) {
 		return
 	}
 
-	return resp.StatusCode, body, err
+	return
 }
 
 func HttpPost(url, contentType string, data []byte) ([]byte, error) {
